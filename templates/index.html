@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h1 class="text-center mb-4 text-primary">Welcome to Netlink Wallet</h1>
+                    {% if current_user.is_authenticated %}
+                    <h5 class="text-center mb-3">Your Balance: ${{ current_user.balance }}</h5>
+                    <div class="text-center">
+                        <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+                    </div>
+                    <hr>
+                    <form action="{{ url_for('add_money') }}" method="post">
+                        <div class="form-group">
+                            <input type="number" name="amount" class="form-control" placeholder="Add Balance (USD)" step="0.01" min="0" required>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block">Add Balance</button>
+                    </form>
+                    <hr>
+                    <form action="{{ url_for('send_money') }}" method="post">
+                        <div class="form-group">
+                            <input type="email" name="recipient_email" class="form-control" placeholder="Recipient's Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" name="amount" class="form-control" placeholder="Amount (USD)" step="0.01" min="0" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Send Money</button>
+                    </form>
+                    {% else %}
+                    <p class="lead text-center">Manage your finances with ease using our secure and intuitive wallet application.</p>
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg mr-2">Login</a>
+                        <a href="{{ url_for('signup') }}" id="signup-btn" class="btn btn-outline-primary btn-lg">Sign Up</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to display pop-up message upon successful sign-up -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('signup-btn').addEventListener('click', function(event) {
+            fetch('/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({}) // Empty body since we only need to trigger the signup function
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message); // Display success message in a pop-up
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+{% endblock %}
+
